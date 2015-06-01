@@ -29,10 +29,6 @@ public class InAppBillingPlugin extends CordovaPlugin {
 	private final Boolean ENABLE_DEBUG_LOGGING = true;
 	private final String TAG = "CordovaPurchase";
 
-
-    Rect a;
-
-
     // (arbitrary) request code for the purchase flow
     static final int RC_REQUEST = 10001;
 
@@ -149,7 +145,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
 	 		throw new RuntimeException("Please configure your app's public key.");
 
 	 	// Create the helper, passing it our context and the public key to verify signatures with
-        Log.d(TAG, "Creating IAB helper.");
+         Log.d(TAG, "Creating IAB helper.");
         mHelper = new IabHelper(cordova.getActivity().getApplicationContext(), base64EncodedPublicKey);
 
         // enable debug logging (for a production application, you should set this to false).
@@ -474,7 +470,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
     @Override
     public void onDestroy() {
     	super.onDestroy();
-    	
+
     	// very important:
     	Log.d(TAG, "Destroying helper.");
     	if (mHelper != null) {
