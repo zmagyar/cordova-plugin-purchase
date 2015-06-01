@@ -29,7 +29,6 @@ public class InAppBillingPlugin extends CordovaPlugin {
 	private final Boolean ENABLE_DEBUG_LOGGING = true;
 	private final String TAG = "CordovaPurchase";
 
-
     // (arbitrary) request code for the purchase flow
     static final int RC_REQUEST = 10001;
 
@@ -39,6 +38,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
     // A quite up to date inventory of available items and purchase items
     Inventory myInventory;
 
+    String devPayload;
     CallbackContext callbackContext;
 
 	@Override
@@ -54,8 +54,14 @@ public class InAppBillingPlugin extends CordovaPlugin {
 			// Action selector
 			if ("init".equals(action)) {
 				final List<String> sku = new ArrayList<String>();
-				if(data.length() > 0){
-					JSONArray jsonSkuList = new JSONArray(data.getString(0));
+				this.devPayload = data.getString(0);
+                Log.d(TAG, "Devpayload is: " + this.devPayload);
+                if (this.devPayload == "") {
+                    callbackContext.error(IabHelper.ERR_SETUP + "|Problem setting up in-app billing, you must pass your development payload in first argument");
+                    return true;
+                }
+                if(data.length() > 1){
+					JSONArray jsonSkuList = new JSONArray(data.getString(1));
 					int len = jsonSkuList.length();
 					Log.d(TAG, "Num SKUs Found: "+len);
 	   			 for (int i=0;i<len;i++){
@@ -139,7 +145,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
 	 		throw new RuntimeException("Please configure your app's public key.");
 
 	 	// Create the helper, passing it our context and the public key to verify signatures with
-        Log.d(TAG, "Creating IAB helper.");
+         Log.d(TAG, "Creating IAB helper.");
         mHelper = new IabHelper(cordova.getActivity().getApplicationContext(), base64EncodedPublicKey);
 
         // enable debug logging (for a production application, you should set this to false).
@@ -181,7 +187,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
 		/* TODO: for security, generate your payload here for verification. See the comments on 
          *        verifyDeveloperPayload() for more info. Since this is a sample, we just use 
          *        an empty string, but on a production app you should generate this. */
-		final String payload = "";
+		final String payload = this.devPayload;
 		
 		if (mHelper == null){
 			callbackContext.error(IabHelper.ERR_PURCHASE + "|Billing plugin was not initialized");
@@ -209,7 +215,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
 		/* TODO: for security, generate your payload here for verification. See the comments on 
          *        verifyDeveloperPayload() for more info. Since this is a sample, we just use 
          *        an empty string, but on a production app you should generate this. */
-		final String payload = "";
+		final String payload = this.devPayload;
 		
 		
 		
@@ -464,7 +470,7 @@ public class InAppBillingPlugin extends CordovaPlugin {
     @Override
     public void onDestroy() {
     	super.onDestroy();
-    	
+
     	// very important:
     	Log.d(TAG, "Destroying helper.");
     	if (mHelper != null) {

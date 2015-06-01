@@ -730,8 +730,12 @@ store.verbosity = 0;
     };
     InAppBilling.prototype.init = function(success, fail, options, skus) {
         if (!options) options = {};
+        if (!options.developerPayload) {
+            throw new Error("You must set your developer payload first!");
+        }
         this.options = {
-            showLog: options.showLog !== false
+            showLog: options.showLog !== false,
+            developerPayload: options.developerPayload
         };
         if (this.options.showLog) {
             log("setup ok");
@@ -757,9 +761,9 @@ store.verbosity = 0;
             }
         }
         if (hasSKUs) {
-            cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "init", [ skus ]);
+            cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "init", [ options.developerPayload, skus ]);
         } else {
-            cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "init", []);
+            cordova.exec(success, errorCb(fail), "InAppBillingPlugin", "init", [ options.developerPayload ]);
         }
     };
     InAppBilling.prototype.getPurchases = function(success, fail) {
