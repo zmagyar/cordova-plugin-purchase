@@ -727,6 +727,8 @@ static NSString *rootAppleCA = @"MIIEuzCCA6OgAwIBAgIBAjANBgkqhkiG9w0BAQUFADBiMQs
           NILABLE(product.localizedTitle),       @"title",
           NILABLE(product.localizedDescription), @"description",
           NILABLE(product.localizedPrice),       @"price",
+	  NILABLE(product.price),                @"priceDecimal",
+          NILABLE([product.priceLocale objectForKey:NSLocaleCurrencyCode]), @"currency",          
           nil]];
         [self.plugin.list setObject:product forKey:[NSString stringWithFormat:@"%@", product.productIdentifier]];
     }
